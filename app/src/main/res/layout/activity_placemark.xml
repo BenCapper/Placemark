@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PlacemarkActivity">
+    tools:context=".activities.PlacemarkActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,6 +22,7 @@
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbarAdd"
+                android:label="@string/app_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </com.google.android.material.appbar.AppBarLayout>
