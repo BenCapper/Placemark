@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_placemark.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
-import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 import org.wit.placemark.R
 import org.wit.placemark.main.MainApp
@@ -16,8 +15,9 @@ import org.wit.placemark.models.PlacemarkModel
 
 class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
 
-    val placemark = PlacemarkModel()
+    var placemark = PlacemarkModel()
     lateinit var app : MainApp
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,20 +26,30 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
         info("Placemark Main Activity Started.")
         toolbarAdd.title = title
         setSupportActionBar(toolbarAdd)
+        if (intent.hasExtra("placemark_edit")) {
+            placemark = intent.extras?.getParcelable<PlacemarkModel>("placemark_edit")!!
+            placemarkTitle.setText(placemark.title)
+            placemarkDescription.setText(placemark.description)
+            btnAdd.setText(R.string.save_placemark)
+        }
 
         btnAdd.setOnClickListener() {
             placemark.title = placemarkTitle.text.toString()
             placemark.description = placemarkDescription.text.toString()
-            if (placemark.title.isNotEmpty()) {
-                app.placemarks.add(placemark.copy())
-                info("add Button Pressed: ${placemark}")
-                for (i in app.placemarks.indices) {
-                    info("Placemark[$i]:${app.placemarks[i]}")
-                }
+            if (placemark.title.isNotEmpty() && !app.placemarks.findAll().contains(placemark)) {
+                app.placemarks.create(placemark.copy())
+                info("Add Button Pressed: ${placemark}")
                 setResult(AppCompatActivity.RESULT_OK)
                 finish()
-            } else {
-                toast("Please Enter a title")
+            }
+            else if (app.placemarks.findAll().contains(placemark)){
+                app.placemarks.update(placemark.copy())
+                info("Update Button Pressed: ${placemark}")
+                setResult(AppCompatActivity.RESULT_OK)
+                finish()
+            }
+            else {
+                toast(getString(R.string.request_title))
             }
         }
     }
@@ -49,7 +59,7 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.item_cancel -> startActivityForResult<PlacemarkActivity>(0)
+            R.id.item_cancel -> finish()
         }
         return super.onOptionsItemSelected(item)
     }
