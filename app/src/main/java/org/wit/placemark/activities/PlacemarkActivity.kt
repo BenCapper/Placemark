@@ -17,7 +17,7 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
 
     var placemark = PlacemarkModel()
     lateinit var app : MainApp
-
+    var edit = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +27,7 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
         toolbarAdd.title = title
         setSupportActionBar(toolbarAdd)
         if (intent.hasExtra("placemark_edit")) {
+            edit = true
             placemark = intent.extras?.getParcelable<PlacemarkModel>("placemark_edit")!!
             placemarkTitle.setText(placemark.title)
             placemarkDescription.setText(placemark.description)
@@ -36,21 +37,26 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
         btnAdd.setOnClickListener() {
             placemark.title = placemarkTitle.text.toString()
             placemark.description = placemarkDescription.text.toString()
-            if (placemark.title.isNotEmpty() && !app.placemarks.findAll().contains(placemark)) {
-                app.placemarks.create(placemark.copy())
-                info("Add Button Pressed: ${placemark}")
-                setResult(AppCompatActivity.RESULT_OK)
-                finish()
+            if (placemark.title.isEmpty()) {
+                toast(R.string.request_title)
+            } else {
+                if (edit) {
+                    app.placemarks.update(placemark.copy())
+                    info("update Button Pressed: $placemarkTitle")
+                    setResult(AppCompatActivity.RESULT_OK)
+                    finish()
+                } else {
+                    app.placemarks.create(placemark.copy())
+                    info("add Button Pressed: $placemarkTitle")
+                    setResult(AppCompatActivity.RESULT_OK)
+                    finish()
+                }
             }
-            else if (app.placemarks.findAll().contains(placemark)){
-                app.placemarks.update(placemark.copy())
-                info("Update Button Pressed: ${placemark}")
-                setResult(AppCompatActivity.RESULT_OK)
-                finish()
-            }
-            else {
-                toast(getString(R.string.request_title))
-            }
+
+        }
+
+        chooseImage.setOnClickListener {
+            info ("Select image")
         }
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
