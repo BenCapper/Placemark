@@ -8,12 +8,14 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_placemark.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 import org.wit.placemark.R
 import org.wit.placemark.helpers.readImage
 import org.wit.placemark.helpers.readImageFromPath
 import org.wit.placemark.helpers.showImagePicker
 import org.wit.placemark.main.MainApp
+import org.wit.placemark.models.Location
 import org.wit.placemark.models.PlacemarkModel
 
 
@@ -23,6 +25,7 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
     lateinit var app : MainApp
     var edit = false
     val IMAGE_REQUEST = 1
+    val LOCATION_REQUEST = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +68,16 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
         chooseImage.setOnClickListener {
             showImagePicker(this, IMAGE_REQUEST)
         }
+
+        placemarkLocation.setOnClickListener {
+            val location = Location(52.245696, -7.139102, 15f)
+            if (placemark.zoom != 0f) {
+                location.lat =  placemark.lat
+                location.lng = placemark.lng
+                location.zoom = placemark.zoom
+            }
+            startActivityForResult(intentFor<MapsActivity>().putExtra("location", location), LOCATION_REQUEST)
+        }
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_placemark, menu)
@@ -84,10 +97,18 @@ class PlacemarkActivity : AppCompatActivity(), AnkoLogger {
                 if (data != null) {
                     placemark.image = data.getData().toString()
                     placemarkImage.setImageBitmap(readImage(this, resultCode, data))
+                    chooseImage.setText(R.string.button_changeImage)
+                }
+            }
+            LOCATION_REQUEST -> {
+                if (data != null) {
+                    val location = data.extras?.getParcelable<Location>("location")!!
+                    placemark.lat = location.lat
+                    placemark.lng = location.lng
+                    placemark.zoom = location.zoom
                 }
             }
         }
     }
-
 
 }
