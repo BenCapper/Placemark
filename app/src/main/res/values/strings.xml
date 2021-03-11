@@ -11,4 +11,6 @@
     <string name="button_changeImage">Change Image</string>
     <string name="placemarkImage">Placemark Image</string>
     <string name="select_placemark_image">Select Placemark Image</string>
+    <string name="button_location">Set Location</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

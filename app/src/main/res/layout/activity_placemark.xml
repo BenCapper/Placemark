@@ -91,6 +91,18 @@
                     app:srcCompat="@mipmap/ic_launcher" />
 
                 <Button
+                    android:id="@+id/placemarkLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+
+                    android:stateListAnimator="@null"
+                    android:text="@string/button_location"
+                    android:background="@color/light_blue"
+                    android:textColor="@color/orange"
+                    android:textSize="16sp"/>
+
+                <Button
                     android:id="@+id/btnAdd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
