@@ -3,15 +3,17 @@ package org.wit.placemark.main
 import android.app.Application
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+import org.wit.placemark.models.PlacemarkJSONStore
+import org.wit.placemark.models.PlacemarkStore
 import org.wit.placemark.models.PlacemarkMemStore
 
+class MainApp : Application(), AnkoLogger {
 
-class MainApp : Application(), AnkoLogger{
-
-    val placemarks = PlacemarkMemStore()
+    lateinit var placemarks: PlacemarkStore
 
     override fun onCreate() {
         super.onCreate()
-        info("Placemark Started")
+        placemarks = PlacemarkJSONStore(applicationContext)
+        info("Placemark started")
     }
 }
